@@ -3,11 +3,21 @@ require_once(__DIR__ . '/../../helpers/pagination_helper.php');
 
 // Preparar parâmetros de query para manter os filtros
 $queryParams = [];
-if (isset($data['filters']['data_inicio']) && $data['filters']['data_inicio']) $queryParams['data_inicio'] = $data['filters']['data_inicio'];
-if (isset($data['filters']['data_fim']) && $data['filters']['data_fim']) $queryParams['data_fim'] = $data['filters']['data_fim'];
-if (isset($data['filters']['status']) && $data['filters']['status']) $queryParams['status'] = $data['filters']['status'];
-if (isset($data['filters']['tipo']) && $data['filters']['tipo']) $queryParams['tipo'] = $data['filters']['tipo'];
-if (isset($data['filters']['relator']) && $data['filters']['relator']) $queryParams['relator'] = $data['filters']['relator'];
+if (isset($data['filters']['data_inicio']) && $data['filters']['data_inicio']) {
+    $queryParams['data_inicio'] = $data['filters']['data_inicio'];
+}
+if (isset($data['filters']['data_fim']) && $data['filters']['data_fim']) {
+    $queryParams['data_fim'] = $data['filters']['data_fim'];
+}
+if (isset($data['filters']['status']) && $data['filters']['status']) {
+    $queryParams['status'] = $data['filters']['status'];
+}
+if (isset($data['filters']['tipo']) && $data['filters']['tipo']) {
+    $queryParams['tipo'] = $data['filters']['tipo'];
+}
+if (isset($data['filters']['relator']) && $data['filters']['relator']) {
+    $queryParams['relator'] = $data['filters']['relator'];
+}
 
 // Extrair variáveis do array $data
 $pareceres = $data['pareceres'] ?? [];
