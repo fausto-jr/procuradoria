@@ -1,14 +1,25 @@
 <?php
-// Incluir o helper de paginação
 require_once(__DIR__ . '/../../helpers/pagination_helper.php');
 
 // Preparar parâmetros de query para manter os filtros
 $queryParams = [];
-if (!empty($_GET['data_inicio'])) $queryParams['data_inicio'] = $_GET['data_inicio'];
-if (!empty($_GET['data_fim'])) $queryParams['data_fim'] = $_GET['data_fim'];
-if (!empty($_GET['status'])) $queryParams['status'] = $_GET['status'];
-if (!empty($_GET['relator'])) $queryParams['relator'] = $_GET['relator'];
-if (!empty($_GET['tipo'])) $queryParams['tipo'] = $_GET['tipo'];
+if (isset($data['filters']['data_inicio']) && $data['filters']['data_inicio']) $queryParams['data_inicio'] = $data['filters']['data_inicio'];
+if (isset($data['filters']['data_fim']) && $data['filters']['data_fim']) $queryParams['data_fim'] = $data['filters']['data_fim'];
+if (isset($data['filters']['status']) && $data['filters']['status']) $queryParams['status'] = $data['filters']['status'];
+if (isset($data['filters']['tipo']) && $data['filters']['tipo']) $queryParams['tipo'] = $data['filters']['tipo'];
+if (isset($data['filters']['relator']) && $data['filters']['relator']) $queryParams['relator'] = $data['filters']['relator'];
+
+// Extrair variáveis do array $data
+$pareceres = $data['pareceres'] ?? [];
+$relatores = $data['relatores'] ?? [];
+$total_pareceres = $data['total_pareceres'] ?? 0;
+$pareceres_em_analise = $data['pareceres_em_analise'] ?? 0;
+$pareceres_concluidos = $data['pareceres_concluidos'] ?? 0;
+$page = $data['page'] ?? 1;
+$totalPages = $data['totalPages'] ?? 1;
+$limit = $data['limit'] ?? 15;
+$total = $data['total'] ?? 0;
+$filters = $data['filters'] ?? [];
 ?>
 <?php require_once(__DIR__ . '/../layouts/app.php'); ?>
 
@@ -43,40 +54,40 @@ if (!empty($_GET['tipo'])) $queryParams['tipo'] = $_GET['tipo'];
                     <input type="hidden" name="route" value="relatorios">
                     <div class="col-md-3">
                         <label for="data_inicio" class="form-label">Data Início</label>
-                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="<?= htmlspecialchars($dataInicio) ?>">
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="<?= htmlspecialchars($filters['data_inicio'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-3">
                         <label for="data_fim" class="form-label">Data Fim</label>
-                        <input type="date" class="form-control" id="data_fim" name="data_fim" value="<?= htmlspecialchars($dataFim) ?>">
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" value="<?= htmlspecialchars($filters['data_fim'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-3">
                         <label for="status" class="form-label">Status</label>
                         <select class="form-select" id="status" name="status">
-                            <option value="">Todos</option>
-                            <option value="pendente" <?= $status === 'pendente' ? 'selected' : '' ?>>Pendente</option>
-                            <option value="em_analise" <?= $status === 'em_analise' ? 'selected' : '' ?>>Em Análise</option>
-                            <option value="concluido" <?= $status === 'concluido' ? 'selected' : '' ?>>Concluído</option>
+                            <option value="">Todos os Status</option>
+                            <option value="pendente" <?= ($filters['status'] ?? '') === 'pendente' ? 'selected' : '' ?>>Pendente</option>
+                            <option value="em_analise" <?= ($filters['status'] ?? '') === 'em_analise' ? 'selected' : '' ?>>Em Análise</option>
+                            <option value="concluido" <?= ($filters['status'] ?? '') === 'concluido' ? 'selected' : '' ?>>Concluído</option>
                         </select>
                     </div>
 
                     <div class="col-md-2">
                         <label for="tipo" class="form-label">Tipo</label>
                         <select class="form-select" id="tipo" name="tipo">
-                            <option value="">Todos</option>
-                            <option value="juridico" <?= $tipo === 'juridico' ? 'selected' : '' ?>>Jurídico</option>
-                            <option value="administrativo" <?= $tipo === 'administrativo' ? 'selected' : '' ?>>Administrativo</option>
-                            <option value="tributario" <?= $tipo === 'tributario' ? 'selected' : '' ?>>Tributário</option>
+                            <option value="">Todos os Tipos</option>
+                            <option value="juridico" <?= ($filters['tipo'] ?? '') === 'juridico' ? 'selected' : '' ?>>Jurídico</option>
+                            <option value="administrativo" <?= ($filters['tipo'] ?? '') === 'administrativo' ? 'selected' : '' ?>>Administrativo</option>
+                            <option value="tributario" <?= ($filters['tipo'] ?? '') === 'tributario' ? 'selected' : '' ?>>Tributário</option>
                         </select>
                     </div>
 
                     <div class="col-md-2">
                         <label for="relator" class="form-label">Relator</label>
                         <select class="form-select" id="relator" name="relator">
-                            <option value="">Todos</option>
+                            <option value="">Todos os Relatores</option>
                             <?php foreach ($relatores as $rel): ?>
-                                <option value="<?= $rel['id'] ?>" <?= $relator == $rel['id'] ? 'selected' : '' ?>>
+                                <option value="<?= $rel['id'] ?>" <?= ($filters['relator'] ?? '') == $rel['id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($rel['nome']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -222,7 +233,7 @@ if (!empty($_GET['tipo'])) $queryParams['tipo'] = $_GET['tipo'];
         </div>
 
         <!-- Paginação -->
-        <?php if ($totalPages > 1): ?>
+        <?php if (isset($totalPages) && $totalPages > 1): ?>
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <div class="pagination-info">
                     <?= generatePaginationInfo($page, $limit, $total) ?>

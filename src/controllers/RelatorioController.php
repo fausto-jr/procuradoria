@@ -212,6 +212,26 @@ class RelatorioController {
         $pareceres_em_analise = $stats['pareceres_em_analise'];
         $pareceres_concluidos = $stats['pareceres_concluidos'];
 
+        // Preparar dados para a view
+        $data = [
+            'pareceres' => $pareceres,
+            'relatores' => $relatores,
+            'total_pareceres' => $total_pareceres,
+            'pareceres_em_analise' => $pareceres_em_analise,
+            'pareceres_concluidos' => $pareceres_concluidos,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'limit' => $limit,
+            'total' => $total,
+            'filters' => [
+                'data_inicio' => $dataInicio,
+                'data_fim' => $dataFim,
+                'status' => $status,
+                'relator' => $relator,
+                'tipo' => $tipo
+            ]
+        ];
+
         // Renderizar a view
         require_once(__DIR__ . '/../views/relatorios/index.php');
     }
